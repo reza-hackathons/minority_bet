@@ -1,0 +1,2 @@
+cargo:rustc-env=TYPENUM_BUILD_CONSTS=/home/reza/projects/blockchain/near/text/contract/target/wasm32-unknown-unknown/release/build/typenum-5d3c110fffb222b4/out/consts.rs
+cargo:rustc-env=TYPENUM_BUILD_OP=/home/reza/projects/blockchain/near/text/contract/target/wasm32-unknown-unknown/release/build/typenum-5d3c110fffb222b4/out/op.rs

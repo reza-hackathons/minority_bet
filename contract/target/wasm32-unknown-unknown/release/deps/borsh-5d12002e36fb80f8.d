@@ -1,0 +1,12 @@
+/home/reza/projects/blockchain/near/text/contract/target/wasm32-unknown-unknown/release/deps/borsh-5d12002e36fb80f8.rmeta: /home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/borsh-0.7.0/src/lib.rs /home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/borsh-0.7.0/src/de/mod.rs /home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/borsh-0.7.0/src/de/hint.rs /home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/borsh-0.7.0/src/schema.rs /home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/borsh-0.7.0/src/schema_helpers.rs /home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/borsh-0.7.0/src/ser/mod.rs
+
+/home/reza/projects/blockchain/near/text/contract/target/wasm32-unknown-unknown/release/deps/libborsh-5d12002e36fb80f8.rlib: /home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/borsh-0.7.0/src/lib.rs /home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/borsh-0.7.0/src/de/mod.rs /home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/borsh-0.7.0/src/de/hint.rs /home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/borsh-0.7.0/src/schema.rs /home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/borsh-0.7.0/src/schema_helpers.rs /home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/borsh-0.7.0/src/ser/mod.rs
+
+/home/reza/projects/blockchain/near/text/contract/target/wasm32-unknown-unknown/release/deps/borsh-5d12002e36fb80f8.d: /home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/borsh-0.7.0/src/lib.rs /home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/borsh-0.7.0/src/de/mod.rs /home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/borsh-0.7.0/src/de/hint.rs /home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/borsh-0.7.0/src/schema.rs /home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/borsh-0.7.0/src/schema_helpers.rs /home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/borsh-0.7.0/src/ser/mod.rs
+
+/home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/borsh-0.7.0/src/lib.rs:
+/home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/borsh-0.7.0/src/de/mod.rs:
+/home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/borsh-0.7.0/src/de/hint.rs:
+/home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/borsh-0.7.0/src/schema.rs:
+/home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/borsh-0.7.0/src/schema_helpers.rs:
+/home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/borsh-0.7.0/src/ser/mod.rs:

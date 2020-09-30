@@ -1,0 +1,12 @@
+/home/reza/projects/blockchain/near/text/contract/target/wasm32-unknown-unknown/release/deps/num_bigint-eecf025f937d0eb7.rmeta: /home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/num-bigint-0.2.6/src/lib.rs /home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/num-bigint-0.2.6/src/macros.rs /home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/num-bigint-0.2.6/src/bigint.rs /home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/num-bigint-0.2.6/src/biguint.rs /home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/num-bigint-0.2.6/src/algorithms.rs /home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/num-bigint-0.2.6/src/monty.rs
+
+/home/reza/projects/blockchain/near/text/contract/target/wasm32-unknown-unknown/release/deps/libnum_bigint-eecf025f937d0eb7.rlib: /home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/num-bigint-0.2.6/src/lib.rs /home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/num-bigint-0.2.6/src/macros.rs /home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/num-bigint-0.2.6/src/bigint.rs /home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/num-bigint-0.2.6/src/biguint.rs /home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/num-bigint-0.2.6/src/algorithms.rs /home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/num-bigint-0.2.6/src/monty.rs
+
+/home/reza/projects/blockchain/near/text/contract/target/wasm32-unknown-unknown/release/deps/num_bigint-eecf025f937d0eb7.d: /home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/num-bigint-0.2.6/src/lib.rs /home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/num-bigint-0.2.6/src/macros.rs /home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/num-bigint-0.2.6/src/bigint.rs /home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/num-bigint-0.2.6/src/biguint.rs /home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/num-bigint-0.2.6/src/algorithms.rs /home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/num-bigint-0.2.6/src/monty.rs
+
+/home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/num-bigint-0.2.6/src/lib.rs:
+/home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/num-bigint-0.2.6/src/macros.rs:
+/home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/num-bigint-0.2.6/src/bigint.rs:
+/home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/num-bigint-0.2.6/src/biguint.rs:
+/home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/num-bigint-0.2.6/src/algorithms.rs:
+/home/reza/.cargo/registry/src/github.com-1ecc6299db9ec823/num-bigint-0.2.6/src/monty.rs:

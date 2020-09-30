@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="./assets/favicon.ico" />
+  <link rel="apple-touch-icon" href="./assets/favicon.ico" />
+  <title>Welcome to NEAR</title>
+  <link rel="stylesheet" href="global.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+</head>
+<body>
+    <div class="title_box">
+      <h3>Arkham Minority Bet Zoo</h3>
+    </div>    
+    <div class="wallet_box">
+      <div id="walletMessage" style="margin-bottom: 1em;"></div>
+      <a id="connectWalletButton" class="button">Connect</button>
+    </div>
+    <div class="howto_box">
+      <p id="betEndTime" style="float: right; color: darkblue; font-size:0.9em"></p>
+      <p>
+        To make a bet:
+        <ol>
+          <li>Connect your wallet.</li>
+          <li>Select either the '<font color="lightskyblue">Batman</font>' or the '<font color="lightsalmon">Joker</font>' box as your bet.</li>
+          <li>Stake some Near.</li>
+          <li>Hit the 'Bet' button.</li>
+          <li>Wait for the payout!</li>
+        </ol>
+        <p style="color: darkblue">Remember that this is a <b>minority</b> bet system where the party with the <b>lowest</b> staked amount wins.</p>
+    </div>
+    <div class="proposal_box">
+      <div id="jokerBallot" class="proposal joker">
+        <span id="totalJokerStaked" class="total_amount_staked"></span><br/>
+        <span id="myJokerStaked" class="total_amount_staked"></span>
+      </div>
+      <div id="batmanBallot" class="proposal batman">
+        <span id="totalBatmanStaked" class="total_amount_staked"></span><br/>
+        <span id="myBatmanStaked" class="total_amount_staked"></span>
+      </div>
+    </div>
+    <div id="betBox" class="bet_box">        
+      <label for="stakeAmoutText">Amount to stake:</label>
+      <input id="stakeAmountText" type="text" pattern="^\d*(\.\d{0,2})?$"></input>
+      Max: <a id="maxBalanceButton" href="#"></a> Ⓝ
+      <p>
+          <a id="betButton" class="button">Bet</button>
+      </p>
+    </div> 
+  <script src="./index.js"></script>
+</body>
+</html>

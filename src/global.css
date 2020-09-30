@@ -1,0 +1,114 @@
+* {
+  box-sizing: border-box;
+} 
+
+body {
+  width: 70%;
+  margin: 0 auto;
+  background-color: white;
+  font-family: "Roboto", sans-serif;
+}
+
+a.button{
+  display:inline-block;
+  padding:0.35em 1.2em;
+  margin:0 0.3em 0.3em 0;
+  border-radius:0.12em;
+  box-sizing: border-box;
+  text-decoration:none;
+  font-family:"Roboto", sans-serif;
+  font-weight:300;
+  background-color: blue;
+  color: white;
+  text-align:center;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+a.button:hover{
+  color: white;
+  background-color: #0018A8;
+}
+
+@media all and (max-width:30em){
+  a.button1{
+    display:block;
+    margin:0.4em auto;
+  }
+}
+
+
+.title_box {
+  background-color: whitesmoke;
+  text-align: center;   
+  border-radius: 0.2em;
+  border: solid .1em darkcyan;
+  color: darkcyan;
+  line-height: 4em;
+  margin: 1em;
+}
+
+.wallet_box {
+  background-color: whitesmoke;
+  text-align: center;
+  border: solid .1em darkcyan;
+  border-radius: 0.2em;
+  color: darkcyan;
+  margin: 1em;
+  padding: 1em
+}
+
+.howto_box {
+  background-color: whitesmoke;
+  text-align: left;
+  border: solid .1em darkcyan;
+  border-radius: 0.2em;
+  color: darkcyan;
+  margin: 1em;
+  padding: 1em
+}
+
+.proposal_box {
+  background-color: whitesmoke;
+  border-radius: 0.2em;
+  color: black;
+  display: flex;
+  justify-content: space-between;
+  padding: 1em;
+  margin: 1em;
+}
+
+.proposal{
+    display: inline-block;
+    width: 40%;
+    padding-left: .2em;
+    min-height: 256px;
+    border-radius: 0.2em;
+    background-repeat: no-repeat;
+    background-position: top;
+    text-align: center;
+}
+
+.batman{
+  background-color: lightskyblue;
+  background-image: url("assets/batman128.png")
+}
+
+.joker{
+  background-color: lightsalmon;
+  background-image: url("assets/joker128.png")
+}
+
+.total_amount_staked {
+  position: relative;
+  top: 60%;
+  pointer-events: none;
+}
+
+.bet_box{
+  background-color: whitesmoke;
+  margin: 1em;
+  padding: 1em;
+  text-align: center;
+}
+
