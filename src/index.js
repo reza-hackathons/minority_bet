@@ -10,7 +10,7 @@ const BOATLOAD_OF_GAS = NearApi.utils.format.parseNearAmount("0.0000000003")
 
 let my_bet = {party : "", staked_amount: -1}
 let selected_party = ""
-
+let is_signed_in = false;
 
 function selectJoker() {
   $("#jokerBallot").css("border", "dashed .15em")
@@ -42,7 +42,6 @@ function clearBetBox() {
   $("#stakeAmountText").val("")
   $("#jokerBallot").css("border", "")
   $("#batmanBallot").css("border", "")
-  selected_party = ""
 }
 
 function updateBetBox() {
@@ -109,31 +108,49 @@ async function fetchOverallStats() {
       if(my_bet.party.length != 0){
         if(my_bet.party == "joker") {
           $("#myJokerStaked").html("My stake: " + my_bet.staked_amount + "  Ⓝ")
+          if(joker_staked < batman_staked){
+            let share = my_bet.staked_amount / joker_staked * batman_staked;
+            $("#myJokerResult").html("My win: " + share.toFixed(5) + "  Ⓝ")
+          }
+          else{
+            $("#myJokerResult").html("My loss: " + my_bet.staked_amount + "  Ⓝ")
+          }
           $("#myBatmanStaked").html("")
+          $("#myBatmanResult").html("")
 
         }
         else {
           $("#myBatmanStaked").html("My stake: " + my_bet.staked_amount + "  Ⓝ")
+          if(batman_staked < joker_staked){
+            let share = my_bet.staked_amount / batman_staked * joker_staked;
+            $("#myBatmanResult").html("My win: " + share.toFixed(5) + "  Ⓝ")
+          }
+          else{
+            $("#myBatmanResult").html("My loss: " + my_bet.staked_amount + "  Ⓝ")
+          }
           $("#myJokerStaked").html("")
+          $("#myJokerResult").html("")
         }
       }
       else {
         $("#myJokerStaked").html("")
+        $("#myJokerResult").html("")
         $("#myBatmanStaked").html("")
+        $("#myBatmanResult").html("")
       }
     }
     else {
       $("#totalJokerStaked").html("")
       $("#totalBatmanStaked").html("")
       let bet_start_time = 5 + bet_end_time
-      $("#betEndTime").html("Payouts being sent, beeting starts in ~<u>" + bet_start_time + "</u> minute(s).")
+      $("#betEndTime").html("Payouts being sent, betting starts in ~<u>" + bet_start_time + "</u> minute(s).")
       $("#betButton").attr("disabled", true)
       $("#betBox").css("display", "none")
       $("#bettingSummary").html("")
     }
   }
   catch(e) {
-    console.log("Failed to fetch overall stats.\n" + e)
+    console.log(e)
   }  
 }
 
@@ -165,11 +182,12 @@ async function fetchMyBet() {
     clearBetBox()
     my_bet = {party : "", staked_amount: -1}
     $("#betButton").html("Bet")
-    console.log("You may have not bet or there are some problems. \n" + e)
-    throw e      
+    // console.log(e)
   }
   finally{
-    fetchAccountInfo()
+    if(is_signed_in) {
+      fetchAccountInfo()
+    }
     fetchOverallStats()
   }
 }
@@ -185,7 +203,6 @@ async function distributeRewards(bets) {
     const bet = bets[account_id]
     overall_stakes[bet[0]] += parseFloat(NearApi.utils.format.formatNearAmount(bet[1]))
   }
-  console.log(bets)
   // hence minority wins
   let winners = {}  
   let winning_party = overall_stakes["batman"] < overall_stakes["joker"] ? "batman"
@@ -206,28 +223,29 @@ async function distributeRewards(bets) {
   }
   console.log(winners)
   try {
-    let res = await contract.distribute_rewards({"winners": winners}, BOATLOAD_OF_GAS)
+    let res = await contract.distribute_rewards(
+                      {"cake": NearApi.utils.format.parseNearAmount(cake.toString()), "winners": winners},
+                      BOATLOAD_OF_GAS)
   }
   catch(e) {
-    console.log("Failed to request reward payouts.\n", e)
+    console.log(e)
   }
 }
 
-async function fetchAllBets() {
+async function initiatePayouts() {
   try {
       let bets = await contract.get_all_bets()
       distributeRewards(bets)
     }
     catch(e){
-      console.log("Could not retrieve bettors' data.\n" + e)
+      console.log(e)
     }
 }
 
 
 async function bet(ballot) {
-  let res;
   try {
-    res = await window.contract.bet(
+    let res = await window.contract.bet(
                   {"p": ballot.party}, 
                   BOATLOAD_OF_GAS,                 
                   NearApi.utils.format.parseNearAmount(ballot.staked_amount))
@@ -246,12 +264,12 @@ async function pullout() {
     let res = await window.contract.pullout(
                       {},
                       BOATLOAD_OF_GAS)
-
   }
   catch(e) {
-    console.log("Failed to pullout.\n" + e)
+    console.log(e)
   }
   finally {
+    location.reload()
     fetchMyBet()
   }
 
@@ -262,17 +280,20 @@ function pollTimerCallback() {
 }
 
 function rewardTimerCallback() {
-  fetchAllBets()
+  console.log("Initiating payouts... this should have been a separate contract/app but time is scarce.")
+  initiatePayouts()
 }
 
 function signedOutFlow() {
   $("#walletMessage").html("To make a bet, please connect your wallet.")
   $("#betButton").attr("disabled", true)
+  is_signed_in = false
 }
 
 function signedInFlow() {  
   fetchMyBet()
   $("betButton").removeAttr("disabled");
+  is_signed_in = true
 }
 
 // `nearInitPromise` gets called on page load
@@ -288,6 +309,6 @@ window.nearInitPromise = initContract()
     }
     var poll_timer = setInterval(pollTimerCallback, 20 * 1000); // every 20 sec
     pollTimerCallback()
-    // var reward_timer = setInterval(rewardTimerCallback, 2 * 60 * 1000); // every 2 minutes
+    var reward_timer = setInterval(rewardTimerCallback, 3 * 60 * 1000); // every 3 minutes
   })
   .catch(console.error)

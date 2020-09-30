@@ -5,7 +5,7 @@
 body {
   width: 70%;
   margin: 0 auto;
-  background-color: white;
+  background-color: darkgray;
   font-family: "Roboto", sans-serif;
 }
 
@@ -18,7 +18,7 @@ a.button{
   text-decoration:none;
   font-family:"Roboto", sans-serif;
   font-weight:300;
-  background-color: blue;
+  background-color: crimson;
   color: white;
   text-align:center;
   transition: all 0.2s;
@@ -27,7 +27,7 @@ a.button{
 
 a.button:hover{
   color: white;
-  background-color: #0018A8;
+  background-color: #990d00;
 }
 
 @media all and (max-width:30em){
@@ -44,7 +44,7 @@ a.button:hover{
   border-radius: 0.2em;
   border: solid .1em darkcyan;
   color: darkcyan;
-  line-height: 4em;
+  line-height: 2em;
   margin: 1em;
 }
 
@@ -70,6 +70,7 @@ a.button:hover{
 
 .proposal_box {
   background-color: whitesmoke;
+  border: solid .1em darkcyan;
   border-radius: 0.2em;
   color: black;
   display: flex;
@@ -78,6 +79,16 @@ a.button:hover{
   margin: 1em;
 }
 
+.rationale_box {
+  background-color: whitesmoke;
+  color: darkblue;
+  text-align: left;
+  border: solid .1em darkcyan;
+  border-radius: 0.2em;
+  margin: 1em;
+  padding: 1em;
+  text-align: justify;
+}
 .proposal{
     display: inline-block;
     width: 40%;
@@ -110,6 +121,9 @@ a.button:hover{
   margin: 1em;
   padding: 1em;
   text-align: center;
+  border: solid .1em darkcyan;
+  border-radius: 0.2em;
+
 }
 
 

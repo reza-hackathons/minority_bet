@@ -4,6 +4,7 @@ use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::wee_alloc;
 use near_sdk::{env, near_bindgen, AccountId, Promise};
 use std::collections::HashMap;
+use std::cmp;
 use std::convert::TryInto;
 
 #[global_allocator]
@@ -31,17 +32,9 @@ pub struct Bet {
 #[near_bindgen]
 impl Bet {
 
-    // pub fn new_election(&mut self) {
-    //     // assert!(env::signer_account_id() != env::current_account_id(),
-    //     //         ERR_NOT_RIGHT_SENDER);
-    //     self.election_start_time = env::block_timestamp();
-    //     self.bets.clear()                
-    // }
-
     fn get_cur_min(&self) -> u8 {
         let secs_from_epoch = env::block_timestamp() / 1000000000;
         ((secs_from_epoch / 60) % 60).try_into().unwrap()
-
     }
 
     #[payable]
@@ -130,34 +123,49 @@ impl Bet {
         all_bets
     }
 
-    pub fn distribute_rewards(&mut self, winners: HashMap<String, String>) {
+    pub fn distribute_rewards(&mut self, cake: String, winners: HashMap<String, String>) {
         // assert!(env::signer_account_id() != env::current_account_id(),
         //         ERR_NOT_RIGHT_SENDER);
         let cur_min = self.get_cur_min();
-        assert!(cur_min > 55,
-                "Betting will end in {} minutes.", 55 - cur_min);
+        // assert!(cur_min > 55,
+        //         "Betting still alive.");
         assert!(self.bets.len() > 0,
                 "No bets found or rewards already distributed.");
-        let (joker_staked, batman_staked) = self.count_stakes();
+        let (joker_staked, batman_staked) = self.count_stakes();        
         if (joker_staked == 0) || (batman_staked == 0) {
-            // woha! ez money, not gonna refund those who staked
+            // no winners and the contract wins all 
+            // woha! ez money, not gonna refund those who staked 
             self.bets.clear();
+            env::log(format!("All funds staked in a single party, here contract wins :D").as_bytes())
         }
         else {
-            // safety check
+            // safety checks
+            // a: we have a winner
+            assert!(batman_staked != joker_staked,
+                    "It is a draw: {} = {}, betting continues.",
+                    batman_staked,
+                    joker_staked);            
+            // b: bettors list not modified
             for (account_id, _) in &winners {
                 assert!(self.bets.contains_key(account_id),
-                        "Bettors list got modified, need to recalculate rewards");
+                        "Bettors list got modified, need to recalculate rewards");                
             }
+            // c: cake = the internal sum of winners' stake aka real_cake
+            let real_cake = std::cmp::max(joker_staked, batman_staked);
+            assert_eq!(real_cake,
+                       u128::from_str_radix(&cake, 10).unwrap(),
+                       "requested payout of {} not equal to the one we have {}.",
+                       cake, real_cake);
+            // pay 'em all
             for (account_id, amount) in &winners {                
                 let payout = u128::from_str_radix(amount, 10).unwrap();
                 self.bets.remove(account_id);
                 Promise::new(account_id.to_string())
                     .transfer(payout);
-                env::log(format!("payout to {} = {}",
+                env::log(format!("payout of {} => '{}'",
+                                 payout,
                                  account_id,
-                                 payout).as_bytes())
-
+                                 ).as_bytes())
             }
             self.bets.clear();
         }
@@ -202,28 +210,4 @@ mod tests {
             epoch_height: 19,
         }
     }
-
-    // #[test]
-    // fn set_then_get_greeting() {
-    //     let context = get_context(vec![], false);
-    //     testing_env!(context);
-    //     let mut contract = Welcome::default();
-    //     contract.set_greeting("howdy".to_string());
-    //     assert_eq!(
-    //         "howdy".to_string(),
-    //         contract.get_greeting("bob_near".to_string())
-    //     );
-    // }
-
-    // #[test]
-    // fn get_default_greeting() {
-    //     let context = get_context(vec![], true);
-    //     testing_env!(context);
-    //     let contract = Welcome::default();
-    //     // this test did not call set_greeting so should return the default "Hello" greeting
-    //     assert_eq!(
-    //         "Hello".to_string(),
-    //         contract.get_greeting("francis.near".to_string())
-    //     );
-    // }
 }

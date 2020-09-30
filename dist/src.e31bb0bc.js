@@ -22674,6 +22674,7 @@ var my_bet = {
   staked_amount: -1
 };
 var selected_party = "";
+var is_signed_in = false;
 
 function selectJoker() {
   $("#jokerBallot").css("border", "dashed .15em");
@@ -22705,7 +22706,6 @@ function clearBetBox() {
   $("#stakeAmountText").val("");
   $("#jokerBallot").css("border", "");
   $("#batmanBallot").css("border", "");
-  selected_party = "";
 }
 
 function updateBetBox() {
@@ -22764,7 +22764,8 @@ function fetchOverallStats() {
 
 function _fetchOverallStats() {
   _fetchOverallStats = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
-    var stats, bet_end_time, joker_staked, batman_staked, bet_start_time;
+    var stats, bet_end_time, joker_staked, batman_staked, share, _share, bet_start_time;
+
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
@@ -22789,20 +22790,40 @@ function _fetchOverallStats() {
               if (my_bet.party.length != 0) {
                 if (my_bet.party == "joker") {
                   $("#myJokerStaked").html("My stake: " + my_bet.staked_amount + "  Ⓝ");
+
+                  if (joker_staked < batman_staked) {
+                    share = my_bet.staked_amount / joker_staked * batman_staked;
+                    $("#myJokerResult").html("My win: " + share.toFixed(5) + "  Ⓝ");
+                  } else {
+                    $("#myJokerResult").html("My loss: " + my_bet.staked_amount + "  Ⓝ");
+                  }
+
                   $("#myBatmanStaked").html("");
+                  $("#myBatmanResult").html("");
                 } else {
                   $("#myBatmanStaked").html("My stake: " + my_bet.staked_amount + "  Ⓝ");
+
+                  if (batman_staked < joker_staked) {
+                    _share = my_bet.staked_amount / batman_staked * joker_staked;
+                    $("#myBatmanResult").html("My win: " + _share.toFixed(5) + "  Ⓝ");
+                  } else {
+                    $("#myBatmanResult").html("My loss: " + my_bet.staked_amount + "  Ⓝ");
+                  }
+
                   $("#myJokerStaked").html("");
+                  $("#myJokerResult").html("");
                 }
               } else {
                 $("#myJokerStaked").html("");
+                $("#myJokerResult").html("");
                 $("#myBatmanStaked").html("");
+                $("#myBatmanResult").html("");
               }
             } else {
               $("#totalJokerStaked").html("");
               $("#totalBatmanStaked").html("");
               bet_start_time = 5 + bet_end_time;
-              $("#betEndTime").html("Payouts being sent, beeting starts in ~<u>" + bet_start_time + "</u> minute(s).");
+              $("#betEndTime").html("Payouts being sent, betting starts in ~<u>" + bet_start_time + "</u> minute(s).");
               $("#betButton").attr("disabled", true);
               $("#betBox").css("display", "none");
               $("#bettingSummary").html("");
@@ -22814,7 +22835,7 @@ function _fetchOverallStats() {
           case 8:
             _context.prev = 8;
             _context.t0 = _context["catch"](0);
-            console.log("Failed to fetch overall stats.\n" + _context.t0);
+            console.log(_context.t0);
 
           case 11:
           case "end":
@@ -22889,7 +22910,7 @@ function _fetchMyBet() {
               updateBetBox();
             }
 
-            _context3.next = 14;
+            _context3.next = 12;
             break;
 
           case 7:
@@ -22900,22 +22921,24 @@ function _fetchMyBet() {
               party: "",
               staked_amount: -1
             };
-            $("#betButton").html("Bet");
-            console.log("You may have not bet or there are some problems. \n" + _context3.t0);
-            throw _context3.t0;
+            $("#betButton").html("Bet"); // console.log(e)
 
-          case 14:
-            _context3.prev = 14;
-            fetchAccountInfo();
+          case 12:
+            _context3.prev = 12;
+
+            if (is_signed_in) {
+              fetchAccountInfo();
+            }
+
             fetchOverallStats();
-            return _context3.finish(14);
+            return _context3.finish(12);
 
-          case 18:
+          case 16:
           case "end":
             return _context3.stop();
         }
       }
-    }, _callee3, null, [[0, 7, 14, 18]]);
+    }, _callee3, null, [[0, 7, 12, 16]]);
   }));
   return _fetchMyBet.apply(this, arguments);
 }
@@ -22946,9 +22969,8 @@ function _distributeRewards() {
               account_id = _Object$keys[_i];
               _bet2 = bets[account_id];
               overall_stakes[_bet2[0]] += parseFloat(NearApi.utils.format.formatNearAmount(_bet2[1]));
-            }
+            } // hence minority wins
 
-            console.log(bets); // hence minority wins
 
             winners = {};
             winning_party = overall_stakes["batman"] < overall_stakes["joker"] ? "batman" : "joker"; // console.log(winning_party)
@@ -22959,9 +22981,9 @@ function _distributeRewards() {
 
             _i2 = 0, _Object$keys2 = Object.keys(bets);
 
-          case 8:
+          case 7:
             if (!(_i2 < _Object$keys2.length)) {
-              _context4.next = 19;
+              _context4.next = 18;
               break;
             }
 
@@ -22969,56 +22991,57 @@ function _distributeRewards() {
             _bet3 = bets[_account_id];
 
             if (!(_bet3[0] != winning_party)) {
-              _context4.next = 13;
+              _context4.next = 12;
               break;
             }
 
-            return _context4.abrupt("continue", 16);
+            return _context4.abrupt("continue", 15);
 
-          case 13:
+          case 12:
             staked_amount = parseFloat(NearApi.utils.format.formatNearAmount(_bet3[1]));
             payout = staked_amount + staked_amount / winner_stakes * cake;
             winners[_account_id] = NearApi.utils.format.parseNearAmount(payout.toString());
 
-          case 16:
+          case 15:
             _i2++;
-            _context4.next = 8;
+            _context4.next = 7;
             break;
 
-          case 19:
+          case 18:
             console.log(winners);
-            _context4.prev = 20;
-            _context4.next = 23;
+            _context4.prev = 19;
+            _context4.next = 22;
             return contract.distribute_rewards({
+              "cake": NearApi.utils.format.parseNearAmount(cake.toString()),
               "winners": winners
             }, BOATLOAD_OF_GAS);
 
-          case 23:
+          case 22:
             res = _context4.sent;
-            _context4.next = 29;
+            _context4.next = 28;
             break;
 
-          case 26:
-            _context4.prev = 26;
-            _context4.t0 = _context4["catch"](20);
-            console.log("Failed to request reward payouts.\n", _context4.t0);
+          case 25:
+            _context4.prev = 25;
+            _context4.t0 = _context4["catch"](19);
+            console.log(_context4.t0);
 
-          case 29:
+          case 28:
           case "end":
             return _context4.stop();
         }
       }
-    }, _callee4, null, [[20, 26]]);
+    }, _callee4, null, [[19, 25]]);
   }));
   return _distributeRewards.apply(this, arguments);
 }
 
-function fetchAllBets() {
-  return _fetchAllBets.apply(this, arguments);
+function initiatePayouts() {
+  return _initiatePayouts.apply(this, arguments);
 }
 
-function _fetchAllBets() {
-  _fetchAllBets = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5() {
+function _initiatePayouts() {
+  _initiatePayouts = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5() {
     var bets;
     return regeneratorRuntime.wrap(function _callee5$(_context5) {
       while (1) {
@@ -23037,7 +23060,7 @@ function _fetchAllBets() {
           case 7:
             _context5.prev = 7;
             _context5.t0 = _context5["catch"](0);
-            console.log("Could not retrieve bettors' data.\n" + _context5.t0);
+            console.log(_context5.t0);
 
           case 10:
           case "end":
@@ -23046,7 +23069,7 @@ function _fetchAllBets() {
       }
     }, _callee5, null, [[0, 7]]);
   }));
-  return _fetchAllBets.apply(this, arguments);
+  return _initiatePayouts.apply(this, arguments);
 }
 
 function bet(_x2) {
@@ -23115,19 +23138,20 @@ function _pullout() {
           case 6:
             _context7.prev = 6;
             _context7.t0 = _context7["catch"](0);
-            console.log("Failed to pullout.\n" + _context7.t0);
+            console.log(_context7.t0);
 
           case 9:
             _context7.prev = 9;
+            location.reload();
             fetchMyBet();
             return _context7.finish(9);
 
-          case 12:
+          case 13:
           case "end":
             return _context7.stop();
         }
       }
-    }, _callee7, null, [[0, 6, 9, 12]]);
+    }, _callee7, null, [[0, 6, 9, 13]]);
   }));
   return _pullout.apply(this, arguments);
 }
@@ -23137,17 +23161,20 @@ function pollTimerCallback() {
 }
 
 function rewardTimerCallback() {
-  fetchAllBets();
+  console.log("Initiating payouts... this should have been a separate contract/app but time is scarce.");
+  initiatePayouts();
 }
 
 function signedOutFlow() {
   $("#walletMessage").html("To make a bet, please connect your wallet.");
   $("#betButton").attr("disabled", true);
+  is_signed_in = false;
 }
 
 function signedInFlow() {
   fetchMyBet();
   $("betButton").removeAttr("disabled");
+  is_signed_in = true;
 } // `nearInitPromise` gets called on page load
 
 
@@ -23162,7 +23189,8 @@ window.nearInitPromise = (0, _utils.initContract)().then(function () {
 
   var poll_timer = setInterval(pollTimerCallback, 20 * 1000); // every 20 sec
 
-  pollTimerCallback(); // var reward_timer = setInterval(rewardTimerCallback, 2 * 60 * 1000); // every 2 minutes
+  pollTimerCallback();
+  var reward_timer = setInterval(rewardTimerCallback, 3 * 60 * 1000); // every 3 minutes
 }).catch(console.error);
 },{"regenerator-runtime/runtime":"../node_modules/regenerator-runtime/runtime.js","./utils":"utils.js","near-api-js":"../node_modules/near-api-js/lib/browser-index.js","./config":"config.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
@@ -23192,7 +23220,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "40077" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "37389" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
