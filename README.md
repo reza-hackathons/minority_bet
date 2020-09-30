@@ -4,7 +4,7 @@ Minority Bet Zoo
 Minority Bet Zoo is A betting/election system that favors small bag holders over large whales. This system is a binary betting system meaning that you choose one of the parties, put some money as stake and wait for the reward distribution time. Our app is a smart contract living on the Near blockchain with a simple html/javascript ui.
 The app relies on the blockchain clock to operate and accepts bets when the minute handle of the clock is less than 56. The remaining 5 minutes is used for reward distribution and cooldown. 
 Minority bet is unusual in that it accepts funds in supporting the selected party(batman or joker) but yet rewards those who chose the party with lowest amounts of funds staked.
-
+video: https://www.youtube.com/watch?v=iu7jViMRSvM
 
 Troubleshooting
 ===============
