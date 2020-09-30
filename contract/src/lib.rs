@@ -108,10 +108,10 @@ impl Bet {
     pub fn get_all_bets(&self) -> HashMap<String, (String, String)> {
         // assert!(env::signer_account_id() != env::current_account_id(),
         //         ERR_NOT_RIGHT_SENDER);
-        // assert!(self.get_cur_min() > 55,
-        //         "betting is still alive.");
-        // assert!(self.bets.len() > 0,
-        //         "Rewards already distributed.");        
+         assert!(self.get_cur_min() > 55,
+                 "betting is still alive.");
+         assert!(self.bets.len() > 0,
+                 "Rewards already distributed.");        
         let mut all_bets: HashMap<String, (String, String)> = HashMap::new();
         for (account_id, ballot) in &self.bets {
             all_bets.insert(account_id.to_string(),
