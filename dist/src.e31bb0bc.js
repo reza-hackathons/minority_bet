@@ -22675,17 +22675,21 @@ var my_bet = {
 };
 var selected_party = "";
 var is_signed_in = false;
+var bet_end_time = 55;
+var PARTY_JOKER = "joker";
+var PARTY_BATMAN = "batman";
+var NEAR_ICON = "Ⓝ";
 
 function selectJoker() {
   $("#jokerBallot").css("border", "dashed .15em");
   $("#batmanBallot").css("border", "");
-  selected_party = "joker";
+  selected_party = PARTY_JOKER;
 }
 
 function selectBatman() {
   $("#batmanBallot").css("border", "dashed .15em");
   $("#jokerBallot").css("border", "");
-  selected_party = "batman";
+  selected_party = PARTY_BATMAN;
 }
 
 $("#jokerBallot").click(function (event) {
@@ -22711,7 +22715,7 @@ function clearBetBox() {
 function updateBetBox() {
   var staked_amount = my_bet.staked_amount;
 
-  if (my_bet.party == "joker") {
+  if (my_bet.party == PARTY_JOKER) {
     selectJoker();
     $("#jokerAmountStaked").html(staked_amount);
   } else {
@@ -22722,7 +22726,7 @@ function updateBetBox() {
 
 $("#betButton").click(function () {
   if ($(this).html() == "Bet") {
-    if (selected_party < 0) {
+    if (selected_party.length == 0) {
       console.log("Select either the Joker or the Batman box first.");
       return;
     }
@@ -22764,7 +22768,7 @@ function fetchOverallStats() {
 
 function _fetchOverallStats() {
   _fetchOverallStats = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
-    var stats, bet_end_time, joker_staked, batman_staked, share, _share, bet_start_time;
+    var stats, bet_start_time, joker_staked, joker_summary, batman_staked, batman_summary, share, _share;
 
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
@@ -22779,70 +22783,57 @@ function _fetchOverallStats() {
             bet_end_time = parseInt(stats[2]);
 
             if (bet_end_time > 0) {
-              joker_staked = parseFloat(NearApi.utils.format.formatNearAmount(stats[0]));
-              $("#totalJokerStaked").html("TotalStaked: " + joker_staked + "  Ⓝ");
-              batman_staked = parseFloat(NearApi.utils.format.formatNearAmount(stats[1]));
-              $("#totalBatmanStaked").html("Total staked: " + batman_staked + "  Ⓝ");
-              $("#betEndTime").html("Betting will end in ~<u>" + stats[2] + "</u> minute(s).");
+              $("#betEndTime").html("Betting ends in " + stats[2] + " minutes.");
               $("#betButton").removeAttr("disabled");
-              $("#betBox").css("display", "block");
-
-              if (my_bet.party.length != 0) {
-                if (my_bet.party == "joker") {
-                  $("#myJokerStaked").html("My stake: " + my_bet.staked_amount + "  Ⓝ");
-
-                  if (joker_staked < batman_staked) {
-                    share = my_bet.staked_amount / joker_staked * batman_staked;
-                    $("#myJokerResult").html("My win: " + share.toFixed(5) + "  Ⓝ");
-                  } else {
-                    $("#myJokerResult").html("My loss: " + my_bet.staked_amount + "  Ⓝ");
-                  }
-
-                  $("#myBatmanStaked").html("");
-                  $("#myBatmanResult").html("");
-                } else {
-                  $("#myBatmanStaked").html("My stake: " + my_bet.staked_amount + "  Ⓝ");
-
-                  if (batman_staked < joker_staked) {
-                    _share = my_bet.staked_amount / batman_staked * joker_staked;
-                    $("#myBatmanResult").html("My win: " + _share.toFixed(5) + "  Ⓝ");
-                  } else {
-                    $("#myBatmanResult").html("My loss: " + my_bet.staked_amount + "  Ⓝ");
-                  }
-
-                  $("#myJokerStaked").html("");
-                  $("#myJokerResult").html("");
-                }
-              } else {
-                $("#myJokerStaked").html("");
-                $("#myJokerResult").html("");
-                $("#myBatmanStaked").html("");
-                $("#myBatmanResult").html("");
-              }
             } else {
-              $("#totalJokerStaked").html("");
-              $("#totalBatmanStaked").html("");
               bet_start_time = 5 + bet_end_time;
-              $("#betEndTime").html("Payouts being sent, betting starts in ~<u>" + bet_start_time + "</u> minute(s).");
+              $("#betEndTime").html("Betting starts in " + bet_start_time + " minutes.");
               $("#betButton").attr("disabled", true);
-              $("#betBox").css("display", "none");
-              $("#bettingSummary").html("");
             }
 
-            _context.next = 11;
+            joker_staked = parseFloat(NearApi.utils.format.formatNearAmount(stats[0]));
+            joker_summary = "Total: " + joker_staked + " " + NEAR_ICON;
+            batman_staked = parseFloat(NearApi.utils.format.formatNearAmount(stats[1]));
+            batman_summary = "Total: " + batman_staked + " " + NEAR_ICON;
+
+            if (my_bet.party.length != 0) {
+              if (my_bet.party == PARTY_JOKER) {
+                joker_summary += "<br/>My stake: " + my_bet.staked_amount + " " + NEAR_ICON;
+
+                if (joker_staked < batman_staked) {
+                  share = my_bet.staked_amount / joker_staked * batman_staked;
+                  joker_summary += "<br/>My win: " + share.toFixed(2) + " " + NEAR_ICON;
+                } else {
+                  joker_summary += "<br/>My loss: " + my_bet.staked_amount + " " + NEAR_ICON;
+                }
+              } else {
+                batman_summary += "<br/>My stake: " + my_bet.staked_amount + "  " + NEAR_ICON;
+
+                if (batman_staked < joker_staked) {
+                  _share = my_bet.staked_amount / batman_staked * joker_staked;
+                  batman_summary += "<br/>My win: " + _share.toFixed(5) + "  " + NEAR_ICON;
+                } else {
+                  batman_summary += "<br/>My loss: " + my_bet.staked_amount + "  " + NEAR_ICON;
+                }
+              }
+            }
+
+            $("#jokerSummary").html(joker_summary);
+            $("#batmanSummary").html(batman_summary);
+            _context.next = 18;
             break;
 
-          case 8:
-            _context.prev = 8;
+          case 15:
+            _context.prev = 15;
             _context.t0 = _context["catch"](0);
             console.log(_context.t0);
 
-          case 11:
+          case 18:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, null, [[0, 8]]);
+    }, _callee, null, [[0, 15]]);
   }));
   return _fetchOverallStats.apply(this, arguments);
 }
@@ -22895,12 +22886,18 @@ function _fetchMyBet() {
         switch (_context3.prev = _context3.next) {
           case 0:
             _context3.prev = 0;
-            _context3.next = 3;
+
+            if (!is_signed_in) {
+              _context3.next = 6;
+              break;
+            }
+
+            _context3.next = 4;
             return window.contract.get_bet({
               account_id: window.accountId
             });
 
-          case 3:
+          case 4:
             v = _context3.sent;
 
             if (v) {
@@ -22910,35 +22907,36 @@ function _fetchMyBet() {
               updateBetBox();
             }
 
-            _context3.next = 12;
+          case 6:
+            _context3.next = 13;
             break;
 
-          case 7:
-            _context3.prev = 7;
+          case 8:
+            _context3.prev = 8;
             _context3.t0 = _context3["catch"](0);
             clearBetBox();
             my_bet = {
               party: "",
               staked_amount: -1
             };
-            $("#betButton").html("Bet"); // console.log(e)
+            $("#betButton").html("Bet");
 
-          case 12:
-            _context3.prev = 12;
+          case 13:
+            _context3.prev = 13;
 
             if (is_signed_in) {
               fetchAccountInfo();
             }
 
             fetchOverallStats();
-            return _context3.finish(12);
+            return _context3.finish(13);
 
-          case 16:
+          case 17:
           case "end":
             return _context3.stop();
         }
       }
-    }, _callee3, null, [[0, 7, 12, 16]]);
+    }, _callee3, null, [[0, 8, 13, 17]]);
   }));
   return _fetchMyBet.apply(this, arguments);
 }
@@ -22948,42 +22946,49 @@ $("#maxBalanceButton").click(function (event) {
   $("#stakeAmountText").val($("#maxBalanceButton").html());
 });
 
-function distributeRewards(_x) {
-  return _distributeRewards.apply(this, arguments);
+function compareBets(a, b) {
+  if (a["staked_amount"] < b["staked_amount"]) {
+    return -1;
+  } else if (a["staked_amount"] > b["staked_amount"]) {
+    return 1;
+  } else {
+    return 0;
+  }
 }
 
-function _distributeRewards() {
-  _distributeRewards = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(bets) {
-    var overall_stakes, _i, _Object$keys, account_id, _bet2, winners, winning_party, winner_stakes, cake, _i2, _Object$keys2, _account_id, _bet3, staked_amount, payout, res;
+function requestRewardPayouts(_x) {
+  return _requestRewardPayouts.apply(this, arguments);
+}
+
+function _requestRewardPayouts() {
+  _requestRewardPayouts = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(bets) {
+    var overall_stakes, _i, _Object$keys, account_id, _bet2, winners, winning_party, winner_stakes, cake, rank, _i2, _Object$keys2, _account_id, _bet3, staked_amount, payout, winnners_rank, i, item, params, res;
 
     return regeneratorRuntime.wrap(function _callee4$(_context4) {
       while (1) {
         switch (_context4.prev = _context4.next) {
           case 0:
-            overall_stakes = {
-              "joker": 0.0,
-              "batman": 0.0
-            };
+            overall_stakes = {};
+            overall_stakes[PARTY_JOKER] = 0.0;
+            overall_stakes[PARTY_BATMAN] = 0.0;
 
             for (_i = 0, _Object$keys = Object.keys(bets); _i < _Object$keys.length; _i++) {
               account_id = _Object$keys[_i];
               _bet2 = bets[account_id];
               overall_stakes[_bet2[0]] += parseFloat(NearApi.utils.format.formatNearAmount(_bet2[1]));
-            } // hence minority wins
+            }
 
+            winners = {}; // hence minority wins
 
-            winners = {};
-            winning_party = overall_stakes["batman"] < overall_stakes["joker"] ? "batman" : "joker"; // console.log(winning_party)
-
-            winner_stakes = Math.min(overall_stakes["joker"], overall_stakes["batman"]); // console.log(winner_stakes)
-
-            cake = Math.max(overall_stakes["joker"], overall_stakes["batman"]); // console.log(cake)
-
+            winning_party = overall_stakes[PARTY_BATMAN] < overall_stakes[PARTY_JOKER] ? PARTY_BATMAN : PARTY_JOKER;
+            winner_stakes = Math.min(overall_stakes[PARTY_JOKER], overall_stakes[PARTY_BATMAN]);
+            cake = Math.max(overall_stakes[PARTY_JOKER], overall_stakes[PARTY_BATMAN]);
+            rank = [];
             _i2 = 0, _Object$keys2 = Object.keys(bets);
 
-          case 7:
+          case 10:
             if (!(_i2 < _Object$keys2.length)) {
-              _context4.next = 18;
+              _context4.next = 22;
               break;
             }
 
@@ -22991,88 +22996,98 @@ function _distributeRewards() {
             _bet3 = bets[_account_id];
 
             if (!(_bet3[0] != winning_party)) {
-              _context4.next = 12;
+              _context4.next = 15;
               break;
             }
 
-            return _context4.abrupt("continue", 15);
+            return _context4.abrupt("continue", 19);
 
-          case 12:
+          case 15:
             staked_amount = parseFloat(NearApi.utils.format.formatNearAmount(_bet3[1]));
+            rank.push({
+              "account_id": _account_id,
+              "staked_amount": staked_amount
+            });
             payout = staked_amount + staked_amount / winner_stakes * cake;
             winners[_account_id] = NearApi.utils.format.parseNearAmount(payout.toString());
 
-          case 15:
+          case 19:
             _i2++;
-            _context4.next = 7;
+            _context4.next = 10;
             break;
-
-          case 18:
-            console.log(winners);
-            _context4.prev = 19;
-            _context4.next = 22;
-            return contract.distribute_rewards({
-              "cake": NearApi.utils.format.parseNearAmount(cake.toString()),
-              "winners": winners
-            }, BOATLOAD_OF_GAS);
 
           case 22:
-            res = _context4.sent;
-            _context4.next = 28;
-            break;
+            if (!(Object.keys(winners).length === 0)) {
+              _context4.next = 25;
+              break;
+            }
+
+            console.log("No winners.");
+            return _context4.abrupt("return");
 
           case 25:
-            _context4.prev = 25;
-            _context4.t0 = _context4["catch"](19);
+            rank.sort(compareBets);
+            winnners_rank = {};
+
+            for (i = 0; i < rank.length; i++) {
+              item = rank[i];
+              winnners_rank[item["account_id"]] = i;
+            }
+
+            params = {
+              "cake": NearApi.utils.format.parseNearAmount(cake.toString()),
+              "winners": winners,
+              "winners_rank": winnners_rank
+            };
+            _context4.prev = 29;
+            _context4.next = 32;
+            return contract.distribute_rewards(params, BOATLOAD_OF_GAS);
+
+          case 32:
+            res = _context4.sent;
+            _context4.next = 38;
+            break;
+
+          case 35:
+            _context4.prev = 35;
+            _context4.t0 = _context4["catch"](29);
             console.log(_context4.t0);
 
-          case 28:
+          case 38:
           case "end":
             return _context4.stop();
         }
       }
-    }, _callee4, null, [[19, 25]]);
+    }, _callee4, null, [[29, 35]]);
   }));
-  return _distributeRewards.apply(this, arguments);
+  return _requestRewardPayouts.apply(this, arguments);
 }
 
-function initiatePayouts() {
+function initiatePayouts(_x2) {
   return _initiatePayouts.apply(this, arguments);
 }
 
 function _initiatePayouts() {
-  _initiatePayouts = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5() {
-    var bets;
+  _initiatePayouts = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5(bets) {
     return regeneratorRuntime.wrap(function _callee5$(_context5) {
       while (1) {
         switch (_context5.prev = _context5.next) {
           case 0:
-            _context5.prev = 0;
-            _context5.next = 3;
-            return contract.get_all_bets();
+            if (is_signed_in && bet_end_time < 0) {
+              requestRewardPayouts(bets);
+            }
 
-          case 3:
-            bets = _context5.sent;
-            distributeRewards(bets);
-            _context5.next = 10;
-            break;
-
-          case 7:
-            _context5.prev = 7;
-            _context5.t0 = _context5["catch"](0);
-            console.log(_context5.t0);
-
-          case 10:
+          case 1:
           case "end":
             return _context5.stop();
         }
       }
-    }, _callee5, null, [[0, 7]]);
+    }, _callee5);
   }));
   return _initiatePayouts.apply(this, arguments);
 }
 
-function bet(_x2) {
+function bet(_x3) {
   return _bet.apply(this, arguments);
 }
 
@@ -23161,19 +23176,48 @@ function pollTimerCallback() {
 }
 
 function rewardTimerCallback() {
-  console.log("Initiating payouts... this should have been a separate contract/app but time is scarce.");
-  initiatePayouts();
+  return _rewardTimerCallback.apply(this, arguments);
+}
+
+function _rewardTimerCallback() {
+  _rewardTimerCallback = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8() {
+    var bets;
+    return regeneratorRuntime.wrap(function _callee8$(_context8) {
+      while (1) {
+        switch (_context8.prev = _context8.next) {
+          case 0:
+            _context8.prev = 0;
+            _context8.next = 3;
+            return contract.get_all_bets();
+
+          case 3:
+            bets = _context8.sent;
+            initiatePayouts(bets);
+            _context8.next = 10;
+            break;
+
+          case 7:
+            _context8.prev = 7;
+            _context8.t0 = _context8["catch"](0);
+            console.log(_context8.t0);
+
+          case 10:
+          case "end":
+            return _context8.stop();
+        }
+      }
+    }, _callee8, null, [[0, 7]]);
+  }));
+  return _rewardTimerCallback.apply(this, arguments);
 }
 
 function signedOutFlow() {
   $("#walletMessage").html("To make a bet, please connect your wallet.");
-  $("#betButton").attr("disabled", true);
   is_signed_in = false;
 }
 
 function signedInFlow() {
   fetchMyBet();
-  $("betButton").removeAttr("disabled");
   is_signed_in = true;
 } // `nearInitPromise` gets called on page load
 
@@ -23187,10 +23231,9 @@ window.nearInitPromise = (0, _utils.initContract)().then(function () {
     $("#connectWalletButton").html("Connect");
   }
 
-  var poll_timer = setInterval(pollTimerCallback, 20 * 1000); // every 20 sec
-
+  var poll_timer = setInterval(pollTimerCallback, 30 * 1000);
   pollTimerCallback();
-  var reward_timer = setInterval(rewardTimerCallback, 3 * 60 * 1000); // every 3 minutes
+  var reward_timer = setInterval(rewardTimerCallback, 2 * 60 * 1000);
 }).catch(console.error);
 },{"regenerator-runtime/runtime":"../node_modules/regenerator-runtime/runtime.js","./utils":"utils.js","near-api-js":"../node_modules/near-api-js/lib/browser-index.js","./config":"config.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
@@ -23220,7 +23263,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "37389" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "44083" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

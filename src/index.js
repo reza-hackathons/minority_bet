@@ -10,18 +10,25 @@ const BOATLOAD_OF_GAS = NearApi.utils.format.parseNearAmount("0.0000000003")
 
 let my_bet = {party : "", staked_amount: -1}
 let selected_party = ""
-let is_signed_in = false;
+let is_signed_in = false
+
+let bet_end_time = 55
+
+const PARTY_JOKER  = "joker"
+const PARTY_BATMAN = "batman"
+
+const NEAR_ICON = "Ⓝ"
 
 function selectJoker() {
   $("#jokerBallot").css("border", "dashed .15em")
   $("#batmanBallot").css("border", "")
-  selected_party = "joker"
+  selected_party = PARTY_JOKER
 }
 
 function selectBatman() {
   $("#batmanBallot").css("border","dashed .15em")
   $("#jokerBallot").css("border", "")
-  selected_party = "batman"
+  selected_party = PARTY_BATMAN
 }
 
 $("#jokerBallot").click( function(event) {
@@ -46,7 +53,7 @@ function clearBetBox() {
 
 function updateBetBox() {
   let staked_amount = my_bet.staked_amount
-  if(my_bet.party == "joker") {
+  if(my_bet.party == PARTY_JOKER) {
     selectJoker()
     $("#jokerAmountStaked").html(staked_amount)
   }
@@ -58,7 +65,7 @@ function updateBetBox() {
 
 $("#betButton").click(function() {
   if($(this).html() == "Bet"){
-    if(selected_party < 0) {
+    if(selected_party.length == 0) {
       console.log("Select either the Joker or the Batman box first.")
       return
     }
@@ -96,58 +103,44 @@ $("#connectWalletButton").click(function() {
 async function fetchOverallStats() {
   try {
     let stats = await window.contract.get_overall_stats()
-    let bet_end_time = parseInt(stats[2])
+    bet_end_time = parseInt(stats[2])
     if(bet_end_time > 0) {
-      let joker_staked = parseFloat(NearApi.utils.format.formatNearAmount(stats[0]))
-      $("#totalJokerStaked").html("TotalStaked: " + joker_staked + "  Ⓝ")
-      let batman_staked = parseFloat(NearApi.utils.format.formatNearAmount(stats[1]))
-      $("#totalBatmanStaked").html("Total staked: " + batman_staked + "  Ⓝ")
-      $("#betEndTime").html("Betting will end in ~<u>" + stats[2] + "</u> minute(s).")
-      $("#betButton").removeAttr("disabled")
-      $("#betBox").css("display", "block")
-      if(my_bet.party.length != 0){
-        if(my_bet.party == "joker") {
-          $("#myJokerStaked").html("My stake: " + my_bet.staked_amount + "  Ⓝ")
-          if(joker_staked < batman_staked){
-            let share = my_bet.staked_amount / joker_staked * batman_staked;
-            $("#myJokerResult").html("My win: " + share.toFixed(5) + "  Ⓝ")
-          }
-          else{
-            $("#myJokerResult").html("My loss: " + my_bet.staked_amount + "  Ⓝ")
-          }
-          $("#myBatmanStaked").html("")
-          $("#myBatmanResult").html("")
-
+      $("#betEndTime").html("Betting ends in " + stats[2] + " minutes.")
+      $("#betButton").removeAttr("disabled")      
+    }
+    else {      
+      let bet_start_time = 5 + bet_end_time
+      $("#betEndTime").html("Betting starts in " + bet_start_time + " minutes.")
+      $("#betButton").attr("disabled", true)
+    }
+    let joker_staked = parseFloat(NearApi.utils.format.formatNearAmount(stats[0]))
+    let joker_summary = "Total: " + joker_staked + " " + NEAR_ICON
+    let batman_staked = parseFloat(NearApi.utils.format.formatNearAmount(stats[1]))
+    let batman_summary = "Total: " + batman_staked + " " + NEAR_ICON
+    if(my_bet.party.length != 0){
+      if(my_bet.party == PARTY_JOKER) {
+        joker_summary += "<br/>My stake: " + my_bet.staked_amount + " " + NEAR_ICON
+        if(joker_staked < batman_staked){
+          let share = my_bet.staked_amount / joker_staked * batman_staked
+          joker_summary += "<br/>My win: " + share.toFixed(2) + " " + NEAR_ICON
         }
-        else {
-          $("#myBatmanStaked").html("My stake: " + my_bet.staked_amount + "  Ⓝ")
-          if(batman_staked < joker_staked){
-            let share = my_bet.staked_amount / batman_staked * joker_staked;
-            $("#myBatmanResult").html("My win: " + share.toFixed(5) + "  Ⓝ")
-          }
-          else{
-            $("#myBatmanResult").html("My loss: " + my_bet.staked_amount + "  Ⓝ")
-          }
-          $("#myJokerStaked").html("")
-          $("#myJokerResult").html("")
+        else{
+          joker_summary += "<br/>My loss: " + my_bet.staked_amount + " " + NEAR_ICON
         }
       }
       else {
-        $("#myJokerStaked").html("")
-        $("#myJokerResult").html("")
-        $("#myBatmanStaked").html("")
-        $("#myBatmanResult").html("")
+        batman_summary += "<br/>My stake: " + my_bet.staked_amount + "  " + NEAR_ICON
+        if(batman_staked < joker_staked){
+          let share = my_bet.staked_amount / batman_staked * joker_staked
+          batman_summary += "<br/>My win: " + share.toFixed(5) + "  " + NEAR_ICON
+        }
+        else{
+          batman_summary += "<br/>My loss: " + my_bet.staked_amount + "  " + NEAR_ICON
+        }
       }
     }
-    else {
-      $("#totalJokerStaked").html("")
-      $("#totalBatmanStaked").html("")
-      let bet_start_time = 5 + bet_end_time
-      $("#betEndTime").html("Payouts being sent, betting starts in ~<u>" + bet_start_time + "</u> minute(s).")
-      $("#betButton").attr("disabled", true)
-      $("#betBox").css("display", "none")
-      $("#bettingSummary").html("")
-    }
+    $("#jokerSummary").html(joker_summary)
+    $("#batmanSummary").html(batman_summary)
   }
   catch(e) {
     console.log(e)
@@ -170,19 +163,20 @@ async function fetchAccountInfo() {
 
 async function fetchMyBet() {
   try {
-    let v = await window.contract.get_bet({account_id: window.accountId})  
-    if(v){
-      my_bet.party = v[0]
-      my_bet.staked_amount = NearApi.utils.format.formatNearAmount(v[1])
-      $("#betButton").html("Pullout")
-      updateBetBox()
+    if(is_signed_in) {      
+      let v = await window.contract.get_bet({account_id: window.accountId})  
+      if(v){
+        my_bet.party = v[0]
+        my_bet.staked_amount = NearApi.utils.format.formatNearAmount(v[1])
+        $("#betButton").html("Pullout")
+        updateBetBox()
+      }
     }
   }
   catch(e){
     clearBetBox()
     my_bet = {party : "", staked_amount: -1}
     $("#betButton").html("Bet")
-    // console.log(e)
   }
   finally{
     if(is_signed_in) {
@@ -197,34 +191,62 @@ $("#maxBalanceButton").click(function(event) {
   $("#stakeAmountText").val($("#maxBalanceButton").html())
 })
 
-async function distributeRewards(bets) {
-  let overall_stakes = {"joker": 0.0, "batman" : 0.0}
+function compareBets(a, b) {
+  if(a["staked_amount"] < b["staked_amount"]){
+    return -1;
+  }
+  else if(a["staked_amount"] > b["staked_amount"]){
+    return 1;
+  }
+  else {
+    return 0;
+  }
+}
+
+async function requestRewardPayouts(bets) {
+  let overall_stakes = {}
+  overall_stakes[PARTY_JOKER] =  0.0
+  overall_stakes[PARTY_BATMAN] = 0.0
   for (const account_id of Object.keys(bets)) {
     const bet = bets[account_id]
     overall_stakes[bet[0]] += parseFloat(NearApi.utils.format.formatNearAmount(bet[1]))
   }
-  // hence minority wins
   let winners = {}  
-  let winning_party = overall_stakes["batman"] < overall_stakes["joker"] ? "batman"
-                                                                         : "joker" 
-  // console.log(winning_party)
-  let winner_stakes = Math.min(overall_stakes["joker"], overall_stakes["batman"])
-  // console.log(winner_stakes)
-  let cake = Math.max(overall_stakes["joker"], overall_stakes["batman"])
-  // console.log(cake)
+  // hence minority wins
+  let winning_party = overall_stakes[PARTY_BATMAN] < overall_stakes[PARTY_JOKER] ? PARTY_BATMAN
+                                                                                 : PARTY_JOKER 
+  let winner_stakes = Math.min(overall_stakes[PARTY_JOKER],
+                               overall_stakes[PARTY_BATMAN])
+  let cake = Math.max(overall_stakes[PARTY_JOKER],
+                      overall_stakes[PARTY_BATMAN])
+  let rank = []
   for (const account_id of Object.keys(bets)) {
     const bet = bets[account_id]
     if(bet[0] != winning_party){
       continue;
     }
     let staked_amount = parseFloat(NearApi.utils.format.formatNearAmount(bet[1]))
+    rank.push({"account_id": account_id,
+               "staked_amount": staked_amount})
     let payout = staked_amount + (staked_amount / winner_stakes) * cake
     winners[account_id] = NearApi.utils.format.parseNearAmount(payout.toString())    
   }
-  console.log(winners)
+  if(Object.keys(winners).length === 0){
+    console.log("No winners.")
+    return;
+  }
+  rank.sort(compareBets)
+  let winnners_rank = {}
+  for(let i = 0; i < rank.length; i++){
+    let item = rank[i]
+    winnners_rank[item["account_id"]] = i
+  }
+  let params = {"cake": NearApi.utils.format.parseNearAmount(cake.toString()),
+                "winners": winners,
+                "winners_rank": winnners_rank}
   try {
     let res = await contract.distribute_rewards(
-                      {"cake": NearApi.utils.format.parseNearAmount(cake.toString()), "winners": winners},
+                      params,
                       BOATLOAD_OF_GAS)
   }
   catch(e) {
@@ -232,14 +254,10 @@ async function distributeRewards(bets) {
   }
 }
 
-async function initiatePayouts() {
-  try {
-      let bets = await contract.get_all_bets()
-      distributeRewards(bets)
-    }
-    catch(e){
-      console.log(e)
-    }
+async function initiatePayouts(bets) {
+  if(is_signed_in && bet_end_time < 0) {
+    requestRewardPayouts(bets)
+  }  
 }
 
 
@@ -276,23 +294,27 @@ async function pullout() {
 }
 
 function pollTimerCallback() {    
-    fetchMyBet()
+  fetchMyBet()
 }
 
-function rewardTimerCallback() {
-  console.log("Initiating payouts... this should have been a separate contract/app but time is scarce.")
-  initiatePayouts()
+async function rewardTimerCallback() {
+  try {
+    let bets = await contract.get_all_bets()
+    initiatePayouts(bets)
+
+  }
+  catch(e){
+    console.log(e)
+  }
 }
 
 function signedOutFlow() {
   $("#walletMessage").html("To make a bet, please connect your wallet.")
-  $("#betButton").attr("disabled", true)
   is_signed_in = false
 }
 
 function signedInFlow() {  
   fetchMyBet()
-  $("betButton").removeAttr("disabled");
   is_signed_in = true
 }
 
@@ -307,8 +329,8 @@ window.nearInitPromise = initContract()
       signedOutFlow()
       $("#connectWalletButton").html("Connect")
     }
-    var poll_timer = setInterval(pollTimerCallback, 20 * 1000); // every 20 sec
+    var poll_timer = setInterval(pollTimerCallback, 30 * 1000); 
     pollTimerCallback()
-    var reward_timer = setInterval(rewardTimerCallback, 3 * 60 * 1000); // every 3 minutes
+    var reward_timer = setInterval(rewardTimerCallback, 2 * 60 * 1000);
   })
   .catch(console.error)

@@ -18,37 +18,32 @@
       <a id="connectWalletButton" class="button">Connect
     </a></div>
     <div class="howto_box">
-      <p id="betEndTime" style="float: right; color: darkblue; font-size:0.9em"></p>
+      <p id="betEndTime" style="float: right; color: blue;"></p>
       <p>
         To make a bet:
         <ol>
           <li>Connect your wallet.</li>
           <li>Select either the '<font color="lightskyblue">Batman</font>' or the '<font color="lightsalmon">Joker</font>' box as your bet.</li>
-          <li>Stake some Near.</li>
+          <li>Stake some Ⓝ tokens.</li>
           <li>Hit the 'Bet' button.</li>
           <li>Wait for the payout!</li>
         </ol>
     </p></div>
-    <div class="rationale_box">
-        <p align="center"><b>Rationale</b></p>
-        <p text-align:="" justify;="">Remember that this is a <b>minority</b> bet system where the party with the <b>lowest</b> staked amount wins. <br>This is very <b>counter-intuitive</b> especially in that in order to win you should either play small or sacrifice large amounts to win a a lrger bag which is itself a big loss. So winning in this game requires complex strategies which often leads to big losses.<br>TLDR: this system is a non-linear, 🐳-averse and plankton-friendly, and difficult to influence simple betting system.<br>
-        Play safe and let's go!</p>
+    <div class="caveat_box">
+        <p align="center"><b>Caveat</b></p>
+        <p text-align:="" justify;="">Remember that this is a <b>minority</b> bet system where the party with the <b>lowest</b> staked amount wins. <br>This is very <b>counter-intuitive</b> especially in that in order to win you should either play small or sacrifice large amounts to win a larger bag which is itself a big loss. So winning in this game requires complex strategies which often leads to big losses.</p>
     </div>
     <div class="proposal_box">
       <div id="jokerBallot" class="proposal joker">
-        <span id="totalJokerStaked" class="total_amount_staked"></span><br>
-        <span id="myJokerStaked" class="total_amount_staked"></span><br>
-        <span id="myJokerResult" class="total_amount_staked"></span><br>
+        <p id="jokerSummary" class="total_amount_staked"></p>
       </div>
       <div id="batmanBallot" class="proposal batman">
-        <span id="totalBatmanStaked" class="total_amount_staked"></span><br>
-        <span id="myBatmanStaked" class="total_amount_staked"></span><br>
-        <span id="myBatmanResult" class="total_amount_staked"></span><br>
+        <p id="batmanSummary" class="total_amount_staked"></p>
       </div>
     </div>
-    <div id="betBox" class="bet_box">        
-      <label for="stakeAmoutText">Amount to stake:</label>
-      <input id="stakeAmountText" type="text" pattern="^\d*(\.\d{0,2})?$">
+    <div id="betBox" class="bet_box">   
+      <label for="stakeAmountText">Amount to stake: </label>
+      <input id="stakeAmountText" type="text" placeholder="">
       Max: <a id="maxBalanceButton" href="#"></a> Ⓝ
       <p>
           <a id="betButton" class="button">Bet

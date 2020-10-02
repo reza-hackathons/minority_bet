@@ -5,11 +5,20 @@
 body {
   width: 70%;
   margin: 0 auto;
-  background-color: darkgray;
+  background-color: whitesmoke;
   font-family: "Roboto", sans-serif;
 }
 
+input{
+  border: .1em solid black; 
+  border-radius: 0.2em;
+  padding: 15px;
+  background: snow;
+  margin: 0 0 10px 0;
+}
+
 a.button{
+  min-width: 5em;
   display:inline-block;
   padding:0.35em 1.2em;
   margin:0 0.3em 0.3em 0;
@@ -18,7 +27,7 @@ a.button{
   text-decoration:none;
   font-family:"Roboto", sans-serif;
   font-weight:300;
-  background-color: crimson;
+  background-color: blue;
   color: white;
   text-align:center;
   transition: all 0.2s;
@@ -27,7 +36,7 @@ a.button{
 
 a.button:hover{
   color: white;
-  background-color: #990d00;
+  background-color: darkblue;
 }
 
 @media all and (max-width:30em){
@@ -39,38 +48,40 @@ a.button:hover{
 
 
 .title_box {
-  background-color: whitesmoke;
+  background-color: white;
   text-align: center;   
   border-radius: 0.2em;
-  border: solid .1em darkcyan;
-  color: darkcyan;
+  border: solid .1em black;
+  color: black;
   line-height: 2em;
   margin: 1em;
 }
 
 .wallet_box {
-  background-color: whitesmoke;
+  background-color: white;
   text-align: center;
-  border: solid .1em darkcyan;
+  border: solid .1em black;
   border-radius: 0.2em;
-  color: darkcyan;
+  color: black;
   margin: 1em;
   padding: 1em
 }
 
 .howto_box {
-  background-color: whitesmoke;
+  background-color: white;
   text-align: left;
-  border: solid .1em darkcyan;
+  border: solid .1em black;
   border-radius: 0.2em;
-  color: darkcyan;
+  color: black;
   margin: 1em;
   padding: 1em
 }
 
+
+
 .proposal_box {
-  background-color: whitesmoke;
-  border: solid .1em darkcyan;
+  background-color: white;
+  border: solid .1em black;
   border-radius: 0.2em;
   color: black;
   display: flex;
@@ -79,11 +90,10 @@ a.button:hover{
   margin: 1em;
 }
 
-.rationale_box {
-  background-color: whitesmoke;
-  color: darkblue;
-  text-align: left;
-  border: solid .1em darkcyan;
+.caveat_box {
+  background-color: white;
+  color: black;
+  border: solid .1em black;
   border-radius: 0.2em;
   margin: 1em;
   padding: 1em;
@@ -112,16 +122,16 @@ a.button:hover{
 
 .total_amount_staked {
   position: relative;
-  top: 60%;
+  top: 50%;
   pointer-events: none;
 }
 
 .bet_box{
-  background-color: whitesmoke;
+  background-color: white;
   margin: 1em;
   padding: 1em;
   text-align: center;
-  border: solid .1em darkcyan;
+  border: solid .1em black;
   border-radius: 0.2em;
 
 }

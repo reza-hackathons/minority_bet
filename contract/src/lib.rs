@@ -10,7 +10,7 @@ use std::convert::TryInto;
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
-#[derive(BorshDeserialize, BorshSerialize, PartialEq)]
+#[derive(Debug, BorshDeserialize, BorshSerialize, PartialEq)]
 pub enum Party {
     Invalid = 0,
     Joker,
@@ -37,13 +37,17 @@ impl Bet {
         ((secs_from_epoch / 60) % 60).try_into().unwrap()
     }
 
+    fn accepting_bets(&self) -> bool {
+        self.get_cur_min() <= 55                 
+    }
+
     #[payable]
     pub fn bet(&mut self, p: String) {
-        assert!(self.get_cur_min() <= 55,
-                "We are colling down, please check back later");
+        assert!(self.accepting_bets(),
+                "We are cooling down, please try again a few minutes later.");
         let account_id = env::signer_account_id();
         assert!(!self.bets.contains_key(&account_id),
-                "You have already made your bet.");
+                "Already bet.");
         let staked_amount = env::attached_deposit();
         assert!(staked_amount > 0,
                "Insufficient deposit.");
@@ -60,11 +64,9 @@ impl Bet {
                                  });
     }
 
-    pub fn get_bet(&self, account_id: AccountId) -> (String, String) {        
-        assert!(self.get_cur_min() <= 55,
-                "We are colling down, check back later");
+    pub fn get_bet(&self, account_id: AccountId) -> (String, String) {
         assert!(self.bets.contains_key(&account_id),
-               "No bets found.");
+               "No such bet found.");
         let ballot = self.bets.get(&account_id).unwrap();        
         (match ballot.party {
             Party::Joker => "joker".to_string(),
@@ -74,11 +76,11 @@ impl Bet {
     }
 
     pub fn pullout(&mut self) {
-        assert!(self.get_cur_min() <= 55,
-                "We are colling down, check back later");
+        assert!(self.accepting_bets(),
+                "We are cooling down, please try again a few minutes later.");
         let account_id = env::signer_account_id();
         assert!(self.bets.contains_key(&account_id),
-               "No such bet found.");
+               "Failed to pullout: no such bet found.");
         let ballot = self.bets.remove(&account_id).unwrap();
         Promise::new(account_id.to_string())
                     .transfer(ballot.staked_amount);
@@ -105,13 +107,7 @@ impl Bet {
          55 - (self.get_cur_min() as i8))
     }
 
-    pub fn get_all_bets(&self) -> HashMap<String, (String, String)> {
-        // assert!(env::signer_account_id() != env::current_account_id(),
-        //         ERR_NOT_RIGHT_SENDER);
-         assert!(self.get_cur_min() > 55,
-                 "betting is still alive.");
-         assert!(self.bets.len() > 0,
-                 "Rewards already distributed.");        
+    pub fn get_all_bets(&self) -> HashMap<String, (String, String)> {     
         let mut all_bets: HashMap<String, (String, String)> = HashMap::new();
         for (account_id, ballot) in &self.bets {
             all_bets.insert(account_id.to_string(),
@@ -123,52 +119,78 @@ impl Bet {
         all_bets
     }
 
-    pub fn distribute_rewards(&mut self, cake: String, winners: HashMap<String, String>) {
-        // assert!(env::signer_account_id() != env::current_account_id(),
-        //         ERR_NOT_RIGHT_SENDER);
-        let cur_min = self.get_cur_min();
-        // assert!(cur_min > 55,
-        //         "Betting still alive.");
+    fn do_ranks_match(&self, winners_rank: HashMap<String, u32>) -> bool {
+        let mut internal_rank: Vec<(String, u128)> = Vec::new();
+         for (account_id, _) in &winners_rank {
+            internal_rank.push((account_id.to_string(),
+                                self.bets.get(account_id).unwrap().staked_amount));
+         } 
+         internal_rank.sort_by(|a, b| a.1.cmp(&b.1));
+         let mut i: u32 = 0;
+         for real_rank in internal_rank.iter() {
+            let req_rank = winners_rank.get(&real_rank.0).unwrap();
+            if *req_rank != i {
+                return false;
+            }
+            i += 1;
+         }
+         return true;
+    }
+
+    pub fn distribute_rewards(&mut self,
+                              cake: String,
+                              winners: HashMap<String, String>,
+                              winners_rank: HashMap<String, u32>) {
+        assert!(!self.accepting_bets(),
+                "Betting is still going on.");
         assert!(self.bets.len() > 0,
                 "No bets found or rewards already distributed.");
-        let (joker_staked, batman_staked) = self.count_stakes();        
-        if (joker_staked == 0) || (batman_staked == 0) {
-            // no winners and the contract wins all 
-            // woha! ez money, not gonna refund those who staked 
-            self.bets.clear();
-            env::log(format!("All funds staked in a single party, here contract wins :D").as_bytes())
+        // safety checks
+        // - we should have a winner 
+        let (joker_staked, batman_staked) = self.count_stakes();
+        assert!((joker_staked != 0) && (batman_staked != 0),
+                "All funds staked on a single party, betting resumes.");
+        // - draws not allowed
+        assert!(batman_staked != joker_staked,
+                "No winning party, betting resumes.");            
+        let mut winning_party = Party::Joker;
+        if batman_staked < joker_staked {
+            winning_party = Party::Batman;
         }
-        else {
-            // safety checks
-            // a: we have a winner
-            assert!(batman_staked != joker_staked,
-                    "It is a draw: {} = {}, betting continues.",
-                    batman_staked,
-                    joker_staked);            
-            // b: bettors list not modified
-            for (account_id, _) in &winners {
-                assert!(self.bets.contains_key(account_id),
-                        "Bettors list got modified, need to recalculate rewards");                
-            }
-            // c: cake = the internal sum of winners' stake aka real_cake
-            let real_cake = std::cmp::max(joker_staked, batman_staked);
-            assert_eq!(real_cake,
-                       u128::from_str_radix(&cake, 10).unwrap(),
-                       "requested payout of {} not equal to the one we have {}.",
-                       cake, real_cake);
-            // pay 'em all
-            for (account_id, amount) in &winners {                
-                let payout = u128::from_str_radix(amount, 10).unwrap();
-                self.bets.remove(account_id);
-                Promise::new(account_id.to_string())
-                    .transfer(payout);
-                env::log(format!("payout of {} => '{}'",
-                                 payout,
-                                 account_id,
-                                 ).as_bytes())
-            }
-            self.bets.clear();
+        // - requested winners list = internal list
+        for (account_id, _) in &winners {
+            assert!(self.bets.contains_key(account_id),
+                    "'{}' not in the winners list anymore.",
+                    account_id);                
+            let real_party = &self.bets.get(account_id).unwrap().party;
+            assert_eq!(*real_party,
+                       winning_party,
+                       "'{}' is not a winner.",
+                       account_id);
         }
+        // - cake = the sum of losers' stake
+        let real_cake = cmp::max(joker_staked, batman_staked);
+        assert_eq!(real_cake,
+                   u128::from_str_radix(&cake, 10).unwrap(),
+                   "total payout of {} not equal to the one we have {}.",
+                   cake,
+                   real_cake);
+        // - winners' rank  = internal winners' rank, this is to ensure a winner
+        //   gets the right amount of shares
+        assert!(self.do_ranks_match(winners_rank),
+                "Requested payouts are inconsistent.");
+        // pay 'em all
+        for (account_id, amount) in &winners {                
+            let payout = u128::from_str_radix(amount, 10).unwrap();
+            self.bets.remove(account_id);
+            Promise::new(account_id.to_string())
+                .transfer(payout);
+            env::log(format!("payout of {} => '{}'",
+                             payout,
+                             account_id,
+                             ).as_bytes())
+        }
+        self.bets.clear();
     }
 }
 
