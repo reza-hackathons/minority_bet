@@ -29,7 +29,9 @@ A demo is video taped here which demostrates a typical betting session.
 
 How to run
 =================
-Clone the repository and have the dependencies met by running `yarn install` and then `npm run dev` to launch a local web server for a run.  
+1. Clone the repository  
+2. `yarn install`  
+3. `npm run dev`  
 
 References
 =================
