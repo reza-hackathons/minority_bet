@@ -30,8 +30,9 @@ A demo is video taped here which demostrates a typical betting session.
 How to run
 =================
 1. Clone the repository  
-2. `yarn install`  
-3. `npm run dev`  
+2. [Have a working Near account](https://docs.near.org)
+3. `yarn install`  
+4. `npm run dev`  
 
 References
 =================
