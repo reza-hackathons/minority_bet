@@ -1,21 +1,33 @@
 Minority Bet Zoo
-==================
+=================
 
-Minority Bet Zoo is a binary betting game that challenges participants's strategis to make interesting choices in order to win. It simply asks users to stake some near tokens, choose a party, and finally wait for the winners to be chosen and rewards distribution. The system is a self-regulated zoo where users compete and at the same time judge who wins.
+Minority Bet Zoo is a binary(2-choice) betting game that challenges participants's strategis to make difficult choices in order to win. It simply asks users to stake some near tokens, choose a party, and finally wait for the winners to be chosen and rewards distribution. Users who wish to win, are expected to stake their tokens in a party whose total staked funds is 'minimal'. 
+Each betting session runs for an hour, during the first 55 minutes bettors have a chance to make a bet and then there is a 5 minutes cooldown period where the winners are chosen and reward payouts are made. Betting starts when the minute handle of the blockchain's clock is 0 and ends when the handle reaches 56, with the remaining 5 minutes(56 to 59) reserved for cooldown, payouts, and internal chores.
+Two parties(Batman and Joker) are presented to the users to choose from along with the funds they wish to bet on. Once a bet is made, the profit/loss is presented to the user to let her know what is going to happen. Users are able to pull out of the game and bet again as long as the betting is alive(minute handle <= 55).
+A typical betting games asks the users to bet on some random and unknown outcome and once the outcome is known those who made the right choice are awarded. Here we take a different approach, there is no to be known outcome, and we ask our users to pick the party whose funds is minimal if they wish to win, hence the minority bet. This is counter-intuitive as people are incetivized to maximize their gains and the natural expectation would have been to ask them to pick the party with the higher amounts staked. In situations like this, people get confused as they are asked to put their faith in the minority party. Putting funds into a bet is positive factor and choosing a minority party is a negative one, therefore, we are applying a 'cancel out' factor. This is similar to the funding scheme is perpetual contracts that makes it unsutainable for the market to stay one-sided for long times. Another benefit is the immunity of our scheme to large market movers aka whales. A whale could easily manipulate a majority bet system by staking its funds in a party and suck in the funds. but, in a minority bet this is literally impossible. To win, a whale has to choose the minimal party and once it puts his large bag in that party, the party is no longer the minimal one. So, market manipulation becomes difficult and demands complex strategies which often lead to big losses.
+The system relies on users' honesty to operate. There is no governing body to choose the winners and users themselves regulate the sessions's outcomes. Once the betting is finished, every users gets all the bets and calculates and submits a winners list to the smart contract. The smart contract then performs some security and integrity checks and makes the payouts. Every user is expected to send the winners list along with the rank of every winner in winner party's staked pool. The smart contract rankes winners with its own version of the winners and compares its list with the proposed one and rejcets immediately if discrepancies are discovered. This way users are encouraged to submit a correct record, at least those who wish to get their rewards. The games' inner workings are transparent and self-regulated with no external entities involved. If all funds are staked in a single party or there is no winning party, the betting session is extended to the next hour.
 
-Each betting session runs for 55 minutes and then there is a 5 minute cooldown period when the lucky winners are chosen and reward payouts are made. Betting starts when the minute handle of the blockchain is >= 0 and ends when the handle reaches 56. Users have a chance to make a bet and pullout as long as the session is alive. The betting game has a simple interface asking for a party selected together with amounts user wishes to stake. The simple rule of the game is that the party with lowest staked amount wins. This sounds counter-intuitive! In ordinary binary games, usually the stronger party is the one who wins but here we have decided to go crazy and design a system where large market movement is impossible. The minority takes all approach make it quite difficult for large bag holders to win unless they are ready to burn huge amounts. So, winning requires complex strategis that often do not work. The strange rules of this game makes it difficult for large players to make a 51% attack. If one decides to influence the game, she ought to sacrifices significnt amounts.
-
-Formulae
-==============
+Math behind
+=================
+The rules of winning and reward distribution is simple.
 Parties: (Joker, Batman)
 JokerStaked = the amount of funds bet on Joker
 BatmanStaked = the amount of funds bet on Batman
 WinningParty = party of argMin(JokerStaked, BatmanStaked)
 Cake = argMax(JokerStaked, BatmanStaked)
-ShareOfTheCake = ('amount staked on the minority party' / 'total amount staked on the minority party') * Cake
+ShareOfTheCakeForBettor = ('amount staked on the minority party' / 'total amount staked on the minority party') * Cake
+Payout = 'amount staked on the minority party' + ShareOfTheCakeForBettor
 
-Self regulation
-The betting is regulated by the users themselves and there are no governing bodies to decide the winners. A similar 
-
-
+Math behind
+=================
+A demo is video taped here which demostrates a typical betting session.
 video: https://youtu.be/qyLW3g4-Z9E
+
+How to run
+=================
+Clone the repository and have the dependencies met by running `yarn install` and then `npm run dev` to launch a local web server for a run.
+
+Acknoledgements
+=================
+This system is designed to run on top of the 'Near' blockchain.
+
