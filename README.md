@@ -27,8 +27,9 @@ Demo
 A live version is available on [skynet](https://siasky.net/fANVrQZ4fbN3io8iIXy_-1f42s0EjFU6nRD9y_4-HJYVPw).
 
 A demo is video taped here which demostrates a typical betting session.  
+[Skynet](https://siasky.net/AADmyAnPiqE8-AqkDZLFShue-y4BGcepS0UdijUL9L8jnA)  
 [Youtube](https://youtu.be/qyLW3g4-Z9E)  
-[skynet](https://siasky.net/AADmyAnPiqE8-AqkDZLFShue-y4BGcepS0UdijUL9L8jnA)
+
 
 How to run
 =================
@@ -41,6 +42,7 @@ References
 =================
 [NEAR blockchain](https://near.org)  
 [Skynet](https://siasky.net)
+[Gitcoin](https://gitcoin.co)
 
 License
 =================
