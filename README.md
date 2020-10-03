@@ -41,7 +41,7 @@ How to run
 References
 =================
 [NEAR blockchain](https://near.org)  
-[Skynet](https://siasky.net)
+[Skynet](https://siasky.net)  
 [Gitcoin](https://gitcoin.co)
 
 License
