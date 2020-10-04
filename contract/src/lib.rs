@@ -138,7 +138,6 @@ impl Bet {
     }
 
     pub fn distribute_rewards(&mut self,
-                              cake: String,
                               winners: HashMap<String, String>,
                               winners_rank: HashMap<String, u32>) {
         assert!(!self.accepting_bets(),
@@ -168,20 +167,26 @@ impl Bet {
                        "'{}' is not a winner.",
                        account_id);
         }
-        // - cake = the sum of losers' stake
+        // - cake = the sum of losers' staked
         let real_cake = cmp::max(joker_staked, batman_staked);
+        let mut cake: u128 = 0;
+        for (_, amount) in &winners {
+            cake += u128::from_str_radix(amount, 10).unwrap();
+        }
         assert_eq!(real_cake,
-                   u128::from_str_radix(&cake, 10).unwrap(),
-                   "total payout of {} not equal to the one we have {}.",
+                   cake,
+                   "Requested total payout of '{}' not equal to the one we have '{}'.",
                    cake,
                    real_cake);
         // - winners' rank  = internal winners' rank, this is to ensure a winner
         //   gets the right amount of shares
         assert!(self.do_ranks_match(winners_rank),
-                "Requested payouts are inconsistent.");
+                "Some payout requests are inconsistent.");
         // pay 'em all
         for (account_id, amount) in &winners {                
-            let payout = u128::from_str_radix(amount, 10).unwrap();
+            let ballot = self.bets.get(account_id).unwrap();
+            let payout = ballot.staked_amount + 
+                         u128::from_str_radix(amount, 10).unwrap();
             self.bets.remove(account_id);
             Promise::new(account_id.to_string())
                 .transfer(payout);

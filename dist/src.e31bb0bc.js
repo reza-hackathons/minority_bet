@@ -22946,10 +22946,10 @@ $("#maxBalanceButton").click(function (event) {
   $("#stakeAmountText").val($("#maxBalanceButton").html());
 });
 
-function compareBets(a, b) {
-  if (a["staked_amount"] < b["staked_amount"]) {
+function compareWinners(a, b) {
+  if (a["payout"] < b["payout"]) {
     return -1;
-  } else if (a["staked_amount"] > b["staked_amount"]) {
+  } else if (a["payout"] > b["payout"]) {
     return 1;
   } else {
     return 0;
@@ -23004,11 +23004,11 @@ function _requestRewardPayouts() {
 
           case 15:
             staked_amount = parseFloat(NearApi.utils.format.formatNearAmount(_bet3[1]));
+            payout = staked_amount / winner_stakes * cake;
             rank.push({
               "account_id": _account_id,
-              "staked_amount": staked_amount
+              "payout": payout
             });
-            payout = staked_amount + staked_amount / winner_stakes * cake;
             winners[_account_id] = NearApi.utils.format.parseNearAmount(payout.toString());
 
           case 19:
@@ -23026,7 +23026,7 @@ function _requestRewardPayouts() {
             return _context4.abrupt("return");
 
           case 25:
-            rank.sort(compareBets);
+            rank.sort(compareWinners);
             winnners_rank = {};
 
             for (i = 0; i < rank.length; i++) {
@@ -23035,7 +23035,6 @@ function _requestRewardPayouts() {
             }
 
             params = {
-              "cake": NearApi.utils.format.parseNearAmount(cake.toString()),
               "winners": winners,
               "winners_rank": winnners_rank
             };
@@ -23045,20 +23044,21 @@ function _requestRewardPayouts() {
 
           case 32:
             res = _context4.sent;
-            _context4.next = 38;
+            console.log("Rewards distributed: " + res);
+            _context4.next = 39;
             break;
 
-          case 35:
-            _context4.prev = 35;
+          case 36:
+            _context4.prev = 36;
             _context4.t0 = _context4["catch"](29);
             console.log(_context4.t0);
 
-          case 38:
+          case 39:
           case "end":
             return _context4.stop();
         }
       }
-    }, _callee4, null, [[29, 35]]);
+    }, _callee4, null, [[29, 36]]);
   }));
   return _requestRewardPayouts.apply(this, arguments);
 }
@@ -23263,7 +23263,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "44083" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "45197" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

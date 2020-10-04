@@ -24,7 +24,7 @@ Payout = 'amount staked on the minority party' + ShareOfTheCakeForBettor
 
 Demo
 =================
-A live version is available on [skynet](https://siasky.net/fANVrQZ4fbN3io8iIXy_-1f42s0EjFU6nRD9y_4-HJYVPw).
+A live version is available on [skynet](https://siasky.net/fAMI7iFQqWOh4OvNE14wOq0Bu4Nas0vV_tjZlsIOc4dt7w).
 
 A demo is video taped here which demostrates a typical betting session.  
 [Skynet](https://siasky.net/AADmyAnPiqE8-AqkDZLFShue-y4BGcepS0UdijUL9L8jnA)  

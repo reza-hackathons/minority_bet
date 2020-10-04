@@ -191,11 +191,11 @@ $("#maxBalanceButton").click(function(event) {
   $("#stakeAmountText").val($("#maxBalanceButton").html())
 })
 
-function compareBets(a, b) {
-  if(a["staked_amount"] < b["staked_amount"]){
+function compareWinners(a, b) {
+  if(a["payout"] < b["payout"]){
     return -1;
   }
-  else if(a["staked_amount"] > b["staked_amount"]){
+  else if(a["payout"] > b["payout"]){
     return 1;
   }
   else {
@@ -226,28 +226,28 @@ async function requestRewardPayouts(bets) {
       continue;
     }
     let staked_amount = parseFloat(NearApi.utils.format.formatNearAmount(bet[1]))
+    let payout = (staked_amount / winner_stakes) * cake
     rank.push({"account_id": account_id,
-               "staked_amount": staked_amount})
-    let payout = staked_amount + (staked_amount / winner_stakes) * cake
+               "payout": payout})
     winners[account_id] = NearApi.utils.format.parseNearAmount(payout.toString())    
   }
   if(Object.keys(winners).length === 0){
     console.log("No winners.")
     return;
   }
-  rank.sort(compareBets)
+  rank.sort(compareWinners)
   let winnners_rank = {}
   for(let i = 0; i < rank.length; i++){
     let item = rank[i]
     winnners_rank[item["account_id"]] = i
   }
-  let params = {"cake": NearApi.utils.format.parseNearAmount(cake.toString()),
-                "winners": winners,
+  let params = {"winners": winners,
                 "winners_rank": winnners_rank}
   try {
     let res = await contract.distribute_rewards(
                       params,
                       BOATLOAD_OF_GAS)
+    console.log("Rewards distributed: " + res)
   }
   catch(e) {
     console.log(e)
