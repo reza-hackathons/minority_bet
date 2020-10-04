@@ -199,8 +199,7 @@ impl Bet {
         let winners_staked = cmp::min(joker_staked, batman_staked);
         for (account_id, amount) in &winners {  
             let ballot = self.bets.get(account_id).unwrap();
-            let payout = ballot.staked_amount + 
-                         u128::from_str_radix(amount, 10).unwrap();             
+            let payout = u128::from_str_radix(amount, 10).unwrap();             
             let q_payout = real_cake.checked_div(payout).unwrap();
             let q_staked = winners_staked.checked_div(ballot.staked_amount).unwrap();
             assert_eq!(q_payout,
