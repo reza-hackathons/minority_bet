@@ -175,7 +175,7 @@ impl Bet {
                        account_id);
                 let payout = u128::from_str_radix(winners.get(account_id).unwrap(),
                                                   10).unwrap();
-                assert!(payout > ballot.staked_amount,
+                assert!(payout > 0u128,
                         "Winner '{}' not getting paid enough.",
                         account_id);
             }
