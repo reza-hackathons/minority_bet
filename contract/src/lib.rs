@@ -195,6 +195,20 @@ impl Bet {
         //   gets the right amount of shares
         assert!(self.do_ranks_match(winners_rank),
                 "Some payout requests are inconsistent.");
+        // - check if payouts are fair
+        let winners_staked = cmp::min(joker_staked, batman_staked);
+        for (account_id, amount) in &winners {  
+            let ballot = self.bets.get(account_id).unwrap();
+            let payout = ballot.staked_amount + 
+                         u128::from_str_radix(amount, 10).unwrap();             
+            let q_payout = real_cake.checked_div(payout).unwrap();
+            let q_staked = winners_staked.checked_div(ballot.staked_amount).unwrap();
+            assert_eq!(q_payout,
+                       q_staked,
+                       "Unfair cake division request for '{}'.",
+                       account_id);
+
+        }
         // pay 'em all
         for (account_id, amount) in &winners {                
             let ballot = self.bets.get(account_id).unwrap();
