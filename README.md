@@ -9,7 +9,7 @@ Two parties(**Batman** and **Joker**) are presented to the users to choose from 
 
 A typical betting games asks the users to bet on some random and unknown outcome and once the outcome is known those who made the right choice are awarded. Here we take a different approach, there is no to be known outcome, and we ask our users to pick the party whose funds is minimal if they wish to win, **hence the minority bet**. This is *counter-intuitive* as people are incetivized to maximize their gains and the natural expectation would have been to ask them to pick the party with the higher amounts staked. In situations like this, people get confused as they are asked to put their faith in the minority party. Putting funds into a bet is *positive factor* and choosing a minority party is a *negative one*, therefore, we are applying a *cancel out* factor. This is similar to the funding scheme is perpetual contracts that makes it *unsutainable* for the market to stay one-sided for long times. Another benefit is the immunity of our scheme to large market movers aka **whales**. A whale could easily manipulate a majority bet system by staking its funds in a party and suck in the funds. but, in a minority bet this is literally impossible. To win, a whale has to choose the minimal party and once it puts his large bag in that party, the party is no longer the minimal one. So, market manipulation becomes difficult and demands complex strategies which often lead to big losses.  
 
-The system relies on users' **honesty** to operate. There is no governing body to choose the winners and users themselves regulate the sessions's outcomes. Once the betting is finished, every users gets all the bets and calculates and submits a winners list to the smart contract. The smart contract then performs some security and integrity checks and makes the payouts. Every user is expected to send the winners list along with the rank of every winner in winner party's payout pool. The smart contract then rankes its own version of the winners and compares its list with the proposed one and rejcets immediately if discrepancies are discovered. This way users are encouraged to submit a correct record, at least those who wish to get paid. If no winners list is received by the smart contract, or all the funds are staked within a party, or a draw has happened, then the betting session is extended to the next hour. In case of no honest participants, the betting could go on indefinitely.
+The system relies on users' **honesty** to operate. There is no governing body to choose the winners and users themselves regulate the sessions's outcomes. Once the betting is finished, every users gets all the bets and calculates and submits a winners list to the smart contract. The smart contract then performs some security and integrity checks and makes the payouts. This way users are encouraged to submit a correct record, at least those who wish to get paid. If no winners list is received by the smart contract, or all the funds are staked within a party, or a draw has happened, then the betting session is extended to the next hour. In case of no honest participants, the betting could go on indefinitely.
 
 Math behind
 =================
@@ -29,14 +29,6 @@ A live version is available on [skynet](https://siasky.net/fAMI7iFQqWOh4OvNE14wO
 A demo is video taped here which demostrates a typical betting session.  
 [Skynet](https://siasky.net/AADmyAnPiqE8-AqkDZLFShue-y4BGcepS0UdijUL9L8jnA)  
 [Youtube](https://youtu.be/qyLW3g4-Z9E)  
-
-
-How to run
-=================
-1. Clone the repository  
-2. [Have a working Near account](https://docs.near.org)
-3. `yarn install`  
-4. `npm run dev`  
 
 Warning  
 =================  
