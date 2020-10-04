@@ -38,6 +38,11 @@ How to run
 3. `yarn install`  
 4. `npm run dev`  
 
+Warning  
+=================  
+This is just a demonstration of a possible transparen betting/election process. Please be very caution as there are known security bugs within the smart contract which makes cheating possible.
+
+
 References
 =================
 [NEAR blockchain](https://near.org)  
