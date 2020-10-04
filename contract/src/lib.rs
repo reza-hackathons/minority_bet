@@ -167,6 +167,19 @@ impl Bet {
                        "'{}' is not a winner.",
                        account_id);
         }
+        // - make sure all winners get paid
+        for(account_id, ballot) in &self.bets {
+            if ballot.party == winning_party { 
+                assert!(winners.contains_key(account_id),
+                       "Some winner '{}' not getting paid.",
+                       account_id);
+                let payout = u128::from_str_radix(winners.get(account_id).unwrap(),
+                                                  10).unwrap();
+                assert!(payout > ballot.staked_amount,
+                        "Winner '{}' not getting paid enough.",
+                        account_id);
+            }
+        }
         // - cake = the sum of losers' staked
         let real_cake = cmp::max(joker_staked, batman_staked);
         let mut cake: u128 = 0;
